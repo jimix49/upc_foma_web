@@ -10,13 +10,27 @@ import { toast } from "sonner";
 
 const Cipher = () => {
   const [message, setMessage] = useState("");
-  const [shift, setShift] = useState(3);
+  const [a, setA] = useState(5);
+  const [k, setK] = useState(8);
   const [result, setResult] = useState("");
 
-  // Caesar cipher implementation using modular arithmetic
-  const caesarCipher = (text: string, shiftValue: number, decrypt: boolean = false) => {
-    const effectiveShift = decrypt ? -shiftValue : shiftValue;
-    
+  // Valid values for 'a' (coprime with 26)
+  const validAValues = [1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25];
+
+  // Modular multiplicative inverse
+  const modInverse = (a: number, m: number): number => {
+    for (let x = 1; x < m; x++) {
+      if ((a * x) % m === 1) return x;
+    }
+    return 1;
+  };
+
+  // Affine cipher implementation: C(x) = (ax + k) mod 26
+  const affineCipher = (text: string, aValue: number, kValue: number, decrypt: boolean = false) => {
+    if (!validAValues.includes(aValue)) {
+      return text;
+    }
+
     return text
       .split("")
       .map((char) => {
@@ -24,10 +38,19 @@ const Cipher = () => {
           const code = char.charCodeAt(0);
           const isUpperCase = code >= 65 && code <= 90;
           const base = isUpperCase ? 65 : 97;
+          const x = code - base;
           
-          // Apply modular arithmetic: (x + shift) mod 26
-          const newCode = ((code - base + effectiveShift) % 26 + 26) % 26 + base;
-          return String.fromCharCode(newCode);
+          let newX;
+          if (decrypt) {
+            // D(x) = a^(-1)(x - k) mod 26
+            const aInv = modInverse(aValue, 26);
+            newX = (aInv * (x - kValue + 26)) % 26;
+          } else {
+            // C(x) = (ax + k) mod 26
+            newX = (aValue * x + kValue) % 26;
+          }
+          
+          return String.fromCharCode(newX + base);
         }
         return char;
       })
@@ -36,22 +59,30 @@ const Cipher = () => {
 
   const handleEncrypt = () => {
     if (!message.trim()) {
-      toast.error("Please enter a message to encrypt");
+      toast.error("Si us plau, introdueix un missatge per xifrar");
       return;
     }
-    const encrypted = caesarCipher(message, shift);
+    if (!validAValues.includes(a)) {
+      toast.error("El valor de 'a' ha de ser coprimer amb 26");
+      return;
+    }
+    const encrypted = affineCipher(message, a, k);
     setResult(encrypted);
-    toast.success("Message encrypted!");
+    toast.success("Missatge xifrat!");
   };
 
   const handleDecrypt = () => {
     if (!message.trim()) {
-      toast.error("Please enter a message to decrypt");
+      toast.error("Si us plau, introdueix un missatge per desxifrar");
       return;
     }
-    const decrypted = caesarCipher(message, shift, true);
+    if (!validAValues.includes(a)) {
+      toast.error("El valor de 'a' ha de ser coprimer amb 26");
+      return;
+    }
+    const decrypted = affineCipher(message, a, k, true);
     setResult(decrypted);
-    toast.success("Message decrypted!");
+    toast.success("Missatge desxifrat!");
   };
 
   return (
@@ -61,7 +92,7 @@ const Cipher = () => {
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold text-foreground mb-6">
-            Modular Arithmetic Cipher
+            Xifrat amb Aritmètica Modular
           </h1>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -69,52 +100,61 @@ const Cipher = () => {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Caesar Cipher Theory</CardTitle>
+                  <CardTitle>Teoria del Xifrat Afí</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <h3 className="font-semibold mb-2">What is the Caesar Cipher?</h3>
+                    <h3 className="font-semibold mb-2">Què és el xifrat afí?</h3>
                     <p className="text-muted-foreground">
-                      The Caesar cipher is one of the earliest known encryption techniques, 
-                      named after Julius Caesar who used it in his correspondence. It's a 
-                      substitution cipher where each letter is shifted by a fixed number of 
-                      positions in the alphabet.
+                      El xifrat afí és un tipus de xifratge per substitució monoalfabètica 
+                      que combina multiplicació i desplaçament. Cada lletra es transforma 
+                      mitjançant una funció afí sobre l'aritmètica modular.
                     </p>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold mb-2">Modular Arithmetic</h3>
+                    <h3 className="font-semibold mb-2">Aritmètica Modular</h3>
                     <p className="text-muted-foreground mb-3">
-                      The cipher uses modular arithmetic to wrap around the alphabet:
+                      El xifrat utilitza aritmètica modular per transformar les lletres:
                     </p>
                     <div className="bg-secondary p-4 rounded-lg space-y-2 font-mono text-sm">
-                      <p>Encryption: E(x) = (x + k) mod 26</p>
-                      <p>Decryption: D(x) = (x - k) mod 26</p>
+                      <p>Xifratge: C(x) = (ax + k) mod 26</p>
+                      <p>Desxifratge: D(x) = a⁻¹(x - k) mod 26</p>
                     </div>
                     <p className="text-muted-foreground mt-3">
-                      where x is the letter position (A=0, B=1, ..., Z=25) and k is the shift value.
+                      on x és la posició de la lletra (A=0, B=1, ..., Z=25), 'a' i 'k' són les claus, 
+                      i 'a' ha de ser coprimer amb 26.
                     </p>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold mb-2">Example</h3>
+                    <h3 className="font-semibold mb-2">Valors vàlids per 'a'</h3>
                     <p className="text-muted-foreground">
-                      With a shift of 3:
+                      El valor de 'a' ha de ser coprimer amb 26 (MCD(a,26) = 1):
+                    </p>
+                    <div className="bg-secondary p-3 rounded-lg mt-2 font-mono text-sm">
+                      <p>a ∈ {"{1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25}"}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Exemple</h3>
+                    <p className="text-muted-foreground">
+                      Amb a=5 i k=8:
                     </p>
                     <ul className="list-disc list-inside space-y-1 mt-2 text-muted-foreground">
-                      <li>A → D</li>
-                      <li>B → E</li>
-                      <li>X → A (wraps around)</li>
-                      <li>HELLO → KHOOR</li>
+                      <li>A (0) → I (8)</li>
+                      <li>B (1) → N (13)</li>
+                      <li>HOLA → HSZI</li>
                     </ul>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold mb-2">Security Note</h3>
+                    <h3 className="font-semibold mb-2">Nota de seguretat</h3>
                     <p className="text-muted-foreground text-sm">
-                      The Caesar cipher is not secure by modern standards as there are only 25 
-                      possible keys. It's easily broken by frequency analysis or brute force. 
-                      This demonstration is for educational purposes only.
+                      El xifrat afí no és segur segons els estàndards moderns, ja que només hi ha 
+                      312 claus possibles. És vulnerable a atacs d'anàlisi de freqüències. 
+                      Aquesta demostració és només amb finalitats educatives.
                     </p>
                   </div>
                 </CardContent>
@@ -125,44 +165,59 @@ const Cipher = () => {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Cipher Tool</CardTitle>
+                  <CardTitle>Eina de Xifratge</CardTitle>
                   <CardDescription>
-                    Enter your message and choose a shift value to encrypt or decrypt
+                    Introdueix el teu missatge i tria els valors de 'a' i 'k' per xifrar o desxifrar
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="message">Message</Label>
+                    <Label htmlFor="message">Missatge</Label>
                     <Textarea
                       id="message"
-                      placeholder="Enter your message here..."
+                      placeholder="Introdueix el teu missatge aquí..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       className="min-h-[100px]"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="shift">Shift Value (k)</Label>
-                    <Input
-                      id="shift"
-                      type="number"
-                      min="1"
-                      max="25"
-                      value={shift}
-                      onChange={(e) => setShift(parseInt(e.target.value) || 0)}
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      Choose a number between 1 and 25
-                    </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="a">Valor de 'a'</Label>
+                      <Input
+                        id="a"
+                        type="number"
+                        value={a}
+                        onChange={(e) => setA(parseInt(e.target.value) || 1)}
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        Ha de ser coprimer amb 26
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="k">Valor de 'k'</Label>
+                      <Input
+                        id="k"
+                        type="number"
+                        min="0"
+                        max="25"
+                        value={k}
+                        onChange={(e) => setK(parseInt(e.target.value) || 0)}
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        Entre 0 i 25
+                      </p>
+                    </div>
                   </div>
 
                   <div className="flex gap-3">
                     <Button onClick={handleEncrypt} className="flex-1">
-                      Encrypt
+                      Xifrar
                     </Button>
                     <Button onClick={handleDecrypt} variant="secondary" className="flex-1">
-                      Decrypt
+                      Desxifrar
                     </Button>
                   </div>
                 </CardContent>
@@ -171,7 +226,7 @@ const Cipher = () => {
               {result && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Result</CardTitle>
+                    <CardTitle>Resultat</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <Textarea
@@ -185,27 +240,32 @@ const Cipher = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Mathematical Process</CardTitle>
+                  <CardTitle>Procés Matemàtic</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <p className="text-sm font-semibold mb-1">Current Shift: {shift}</p>
+                    <p className="text-sm font-semibold mb-1">Valors actuals: a={a}, k={k}</p>
                     <p className="text-sm text-muted-foreground">
-                      Each letter is shifted {shift} position{shift !== 1 ? "s" : ""} in the alphabet
+                      Cada lletra es transforma segons la funció afí amb aquests paràmetres
                     </p>
                   </div>
                   <div className="bg-secondary p-4 rounded-lg">
                     <p className="text-sm font-mono">
-                      Encryption formula:<br />
-                      position' = (position + {shift}) mod 26
+                      Fórmula de xifratge:<br />
+                      C(x) = ({a}x + {k}) mod 26
                     </p>
                   </div>
                   <div className="bg-secondary p-4 rounded-lg">
                     <p className="text-sm font-mono">
-                      Decryption formula:<br />
-                      position' = (position - {shift}) mod 26
+                      Fórmula de desxifratge:<br />
+                      D(x) = {modInverse(a, 26)}(x - {k}) mod 26
                     </p>
                   </div>
+                  {!validAValues.includes(a) && (
+                    <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm">
+                      ⚠️ El valor de 'a' no és vàlid. Ha de ser un dels següents: {validAValues.join(", ")}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
