@@ -1,73 +1,227 @@
-# Welcome to your Lovable project
+# Pau Jiménez Sánchez - Academic Portfolio
 
-## Project info
+An interactive academic portfolio showcasing mathematical and computational projects with live demonstrations.
 
-**URL**: https://lovable.dev/projects/6ee0b0e3-6305-4a8b-9d36-3de33067d465
+## 🌐 Live Site
 
-## How can I edit this code?
+Visit: [https://upc.paujimenezsanchez.online](https://upc.paujimenezsanchez.online)
 
-There are several ways of editing your application.
+## 📚 Projects
 
-**Use Lovable**
+### 1. Quadratic Formula Visualization
+- Interactive parabola graphing
+- Real-time root calculation
+- Adjustable coefficients (a, b, c)
+- Visual demonstration of the discriminant
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/6ee0b0e3-6305-4a8b-9d36-3de33067d465) and start prompting.
+### 2. Modular Arithmetic Cipher
+- Caesar cipher encryption/decryption
+- Modular arithmetic demonstration
+- Educational cryptography tool
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Deployment to GitHub Pages
 
-**Use your preferred IDE**
+### Prerequisites
+- Node.js and npm installed
+- Git installed
+- A GitHub account
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Steps
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Clone or download this repository**
+   ```bash
+   git clone <your-repo-url>
+   cd <project-name>
+   ```
 
-Follow these steps:
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. **Build the project**
+   ```bash
+   npm run build
+   ```
+   This creates a `dist` folder with your static files.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4. **Deploy to GitHub Pages**
 
-# Step 3: Install the necessary dependencies.
-npm i
+   Option A: Using gh-pages package
+   ```bash
+   npm install --save-dev gh-pages
+   ```
+   
+   Add to package.json scripts:
+   ```json
+   "scripts": {
+     "deploy": "npm run build && gh-pages -d dist"
+   }
+   ```
+   
+   Then run:
+   ```bash
+   npm run deploy
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+   Option B: Manual deployment
+   - Push the `dist` folder contents to a `gh-pages` branch
+   - Enable GitHub Pages in repository settings, selecting the `gh-pages` branch
+
+5. **Configure GitHub Pages**
+   - Go to your repository Settings
+   - Navigate to Pages section
+   - Select source branch (usually `gh-pages`)
+   - Save settings
+
+### 🌍 Connecting Your Custom Domain
+
+1. **In GitHub Repository Settings:**
+   - Go to Settings → Pages
+   - Under "Custom domain", enter: `upc.paujimenezsanchez.online`
+   - Save
+
+2. **In Your Domain Provider (DNS Settings):**
+   
+   Add the following DNS records:
+   
+   **A Records** (for root domain):
+   ```
+   Type: A
+   Name: @ (or leave blank)
+   Value: 185.158.133.1
+   ```
+
+   **CNAME Record** (for www subdomain):
+   ```
+   Type: CNAME
+   Name: www
+   Value: <your-github-username>.github.io
+   ```
+
+   **CNAME Record** (for upc subdomain):
+   ```
+   Type: CNAME
+   Name: upc
+   Value: <your-github-username>.github.io
+   ```
+
+3. **Wait for DNS propagation** (can take 24-48 hours)
+
+4. **Enable HTTPS** in GitHub Pages settings (automatic after domain verification)
+
+## 📝 Adding New Projects
+
+To add a new project page:
+
+1. **Create a new page component** in `src/pages/`:
+   ```tsx
+   // src/pages/NewProject.tsx
+   import Navigation from "@/components/Navigation";
+   import Footer from "@/components/Footer";
+
+   const NewProject = () => {
+     return (
+       <div className="min-h-screen flex flex-col bg-background">
+         <Navigation />
+         <main className="flex-1 container mx-auto px-4 py-12">
+           {/* Your project content */}
+         </main>
+         <Footer />
+       </div>
+     );
+   };
+
+   export default NewProject;
+   ```
+
+2. **Add the route** in `src/App.tsx`:
+   ```tsx
+   import NewProject from "./pages/NewProject";
+   
+   // In the Routes section:
+   <Route path="/new-project" element={<NewProject />} />
+   ```
+
+3. **Update the navigation** in `src/components/Navigation.tsx`:
+   ```tsx
+   const navItems = [
+     { path: "/", label: "Home" },
+     { path: "/quadratic", label: "Quadratic Formula" },
+     { path: "/cipher", label: "Modular Cipher" },
+     { path: "/new-project", label: "New Project" }, // Add this
+   ];
+   ```
+
+4. **Add project card** on homepage (`src/pages/Index.tsx`):
+   ```tsx
+   const projects = [
+     // ... existing projects
+     {
+       title: "New Project",
+       description: "Description of your new project",
+       path: "/new-project",
+       topics: ["Topic1", "Topic2"]
+     }
+   ];
+   ```
+
+## 🛠️ Development
+
+Run the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The site will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📦 Project Structure
 
-**Use GitHub Codespaces**
+```
+├── src/
+│   ├── components/
+│   │   ├── Navigation.tsx    # Site navigation bar
+│   │   ├── Footer.tsx        # Site footer
+│   │   └── ui/               # Reusable UI components
+│   ├── pages/
+│   │   ├── Index.tsx         # Homepage
+│   │   ├── Quadratic.tsx     # Quadratic formula project
+│   │   ├── Cipher.tsx        # Cipher project
+│   │   └── NotFound.tsx      # 404 page
+│   ├── index.css             # Global styles & design system
+│   └── App.tsx               # Main app & routing
+├── public/                   # Static assets
+└── index.html               # HTML template
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🎨 Customization
 
-## What technologies are used for this project?
+### Updating Colors
+Edit `src/index.css` to change the color scheme:
+```css
+:root {
+  --primary: 210 85% 45%;        /* Main blue */
+  --academic-blue: 210 85% 45%;
+  /* Add more custom colors */
+}
+```
 
-This project is built with:
+### Updating Content
+- Homepage: Edit `src/pages/Index.tsx`
+- Projects: Edit respective files in `src/pages/`
+- Footer: Edit `src/components/Footer.tsx`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📄 License
 
-## How can I deploy this project?
+This portfolio is for academic purposes.
 
-Simply open [Lovable](https://lovable.dev/projects/6ee0b0e3-6305-4a8b-9d36-3de33067d465) and click on Share -> Publish.
+## 👤 Author
 
-## Can I connect a custom domain to my Lovable project?
+**Pau Jiménez Sánchez**  
+Mathematics & Computer Science Student
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+For questions or issues with deployment, please refer to:
+- [GitHub Pages Documentation](https://docs.github.com/en/pages)
+- [Vite Deployment Guide](https://vitejs.dev/guide/static-deploy.html)
