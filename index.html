@@ -263,14 +263,7 @@ Bits 40-47:   10101101 ('a'→97→173)</div>
                 <li><strong>Minimització de distorsió:</strong> Modificar el blau produeix els canvis visuals menys perceptibles</li>
             </ul>
 
-            <h3>Limitacions i Consideracions de Seguretat</h3>
-            <ul style="margin-left: 30px; line-height: 2;">
-                <li><strong>No és criptogràficament segur:</strong> El xifratge afí és vulnerable a atacs de freqüència i força bruta</li>
-                <li><strong>Detecció estadística:</strong> Eines d'estegoanàlisi poden detectar patrons als LSB modificats</li>
-                <li><strong>Format PNG:</strong> Necessari usar PNG (sense pèrdua) ja que JPEG destruiria les dades als LSB</li>
-                <li><strong>Capacitat limitada:</strong> Només podem emmagatzemar 1 bit per píxel (canal blau), limitant la capacitat</li>
-                <li><strong>Recomanació:</strong> Per dades realment sensibles, combinar amb AES o altres algoritmes moderns abans d'incrustar</li>
-            </ul>
+            
 
             <h3>Càlcul de Capacitat d'Emmagatzematge</h3>
             <div class="example-box">
@@ -282,16 +275,13 @@ Bits disponibles = 480.000 bits (1 per píxel al canal blau)
 Bytes disponibles = 480.000 / 8 = 60.000 bytes
                 
 Descomptant 2 bytes per la longitud:
-Capacitat real ≈ 59.998 caràcters (molt més que el límit de 256!)</div>
+Capacitat real ≈ 59.998 caràcters</div>
             </div>
 
-            <h3>Avantatges de la Implementació</h3>
+            <h3>Bibliografia</h3>
             <ul style="margin-left: 30px; line-height: 2;">
-                <li>✓ <strong>Execució client-side:</strong> Tot el processament es fa al navegador, sense enviar dades a servidors</li>
-                <li>✓ <strong>Paràmetres personalitzables:</strong> L'usuari pot triar els seus propis valors de 'a' i 'b'</li>
-                <li>✓ <strong>Validació automàtica:</strong> El sistema verifica que els paràmetres siguin matemàticament vàlids</li>
-                <li>✓ <strong>Feedback visual:</strong> Mostra la matriu de píxels abans i després per propòsits educatius</li>
-                <li>✓ <strong>Compatible amb GitHub Pages:</strong> No requereix backend, funciona completament estàtic</li>
+                <li><a href='https://www.youtube.com/watch?v=TWEXCYQKyDc' >https://www.youtube.com/watch?v=TWEXCYQKyDc</a></li>
+                <li>Hiding data in images by simple LSB substitution. Pattern Recognition, Chan, C. K., & Cheng, L. M</li>
             </ul>
         </div>
 
