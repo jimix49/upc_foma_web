@@ -214,8 +214,7 @@ function handleEncryptFile(file) {
             const preview = document.getElementById('encryptImagePreview');
             preview.innerHTML = `<img src="${e.target.result}" class="image-preview" alt="Imatge Original">`;
             
-            // Show pixel matrix preview
-            showPixelMatrix(img, 'encryptPreview', 'original');
+            // vista prèvia de matriu de píxels eliminada
         };
         img.src = e.target.result;
     };
@@ -331,8 +330,7 @@ function encryptMessage() {
         // Show encryption details
         showEncryptionDetails(message, params.a, params.b);
         
-        // Show after matrix
-        showPixelMatrix(canvas, 'encryptPreview', 'modificada');
+        // vista prèvia de matriu de píxels eliminada
     }, 'image/png');
 }
 
@@ -412,8 +410,7 @@ function decryptMessage() {
     
     showMessage('decryptMessage', '', '');
     
-    // Show pixel matrix
-    showPixelMatrix(canvas, 'decryptPreview', 'descodificada');
+    // vista prèvia de matriu de píxels eliminada
 }
 
 function showEncryptionDetails(message, a, b) {
@@ -437,41 +434,6 @@ function showEncryptionDetails(message, a, b) {
     
     const container = document.getElementById('encryptMessage');
     container.innerHTML += details;
-}
-
-function showPixelMatrix(source, containerId, label) {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    if (source instanceof HTMLCanvasElement) {
-        canvas.width = source.width;
-        canvas.height = source.height;
-        ctx.drawImage(source, 0, 0);
-    } else {
-        canvas.width = source.width;
-        canvas.height = source.height;
-        ctx.drawImage(source, 0, 0);
-    }
-    
-    const imageData = ctx.getImageData(0, 0, Math.min(5, canvas.width), Math.min(5, canvas.height));
-    const pixels = imageData.data;
-    
-    let html = `<div class="preview-container"><div class="preview-box">
-        <h4>Vista Prèvia de la Matriu de Píxels (${label}) - Primers 5×5 píxels (Canal blau)</h4>
-        <div class="matrix-grid">`;
-    
-    for (let i = 0; i < Math.min(25, pixels.length / 4); i++) {
-        const r = pixels[i * 4];
-        const g = pixels[i * 4 + 1];
-        const b = pixels[i * 4 + 2];
-        const lsb = b & 1;
-        html += `<div class="pixel-cell" style="background: rgb(${r},${g},${b}); color: ${b > 127 ? '#000' : '#fff'};">
-            ${b}<br><small>LSB:${lsb}</small>
-        </div>`;
-    }
-    
-    html += '</div></div></div>';
-    document.getElementById(containerId).innerHTML = html;
 }
 
 function showMessage(elementId, message, type) {
