@@ -22,13 +22,13 @@
             <h2>Comprendre l'Esteganografia Basada en Matrius</h2>
             
             <h3>Què és l'Esteganografia?</h3>
-            <p>L'esteganografia és la pràctica d'ocultar informació dins d'altres dades no secretes. A diferència del xifratge, que fa que les dades siguin illegibles, l'esteganografia amaga la mateixa existència del missatge. Les imatges digitals són portadors perfectes perquè contenen milers de píxels i les modificacions lleus són imperceptibles per a l'ull humà.</p>
+            <p>L'esteganografia és la pràctica d'ocultar informació dins d'altres dades no secretes. A diferència del xifratge, que fa que les dades siguin ilegibles, l'esteganografia amaga la mateixa existència del missatge. Les imatges digitals són portadors perfectes perquè contenen milers de píxels i les modificacions lleus són imperceptibles per a l'ull humà.</p>
 
             <h3>Com Funcionen les Matrius de Píxels</h3>
             <p>Les imatges digitals s'emmagatzemen com a matrius (quadrícules) de píxels. Cada píxel conté informació de color codificada com a números. En el model de color RGB, cada píxel té tres valors que van de 0 a 255:</p>
             <ul style="margin-left: 30px; line-height: 2;">
                 <li><strong>R (Vermell)</strong>: 0-255</li>
-                <li><strong>G (Verde)</strong>: 0-255</li>
+                <li><strong>G (Verd)</strong>: 0-255</li>
                 <li><strong>B (Blau)</strong>: 0-255</li>
             </ul>
             <p>Per exemple, el vermell pur és (255, 0, 0), el verd pur és (0, 255, 0) i el blau pur és (0, 0, 255).</p>
@@ -89,7 +89,7 @@ Pas 2 - Establir el nou bit:
 Resultat: 154 → 155 (bit 1 emmagatzemat)</div>
             </div>
 
-            <h3>Encriptació amb Aritmètica Modular Afí</h3>
+            <h3>Xifratge amb Aritmètica Modular Afí</h3>
             <p>Per afegir una capa addicional de seguretat, utilitzem el <strong>xifratge afí</strong>, un tipus d'encriptació basada en aritmètica modular. Abans d'emmagatzemar cada caràcter a la imatge, el transformem utilitzant la fórmula:</p>
             
             <div class="example-box">
