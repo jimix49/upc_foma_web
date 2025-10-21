@@ -1,26 +1,375 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pau Jiménez Sánchez - Academic Portfolio</title>
-    <meta name="description" content="Mathematics and Computer Science student portfolio featuring interactive demonstrations of quadratic formulas and modular arithmetic ciphers" />
-    <meta name="author" content="Pau Jiménez Sánchez" />
-    <link rel="canonical" href="https://upc.paujimenezsanchez.online" />
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esteganografia Basada en Matrius</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Esteganografia Basada en Matrius</h1>
+            <p>Amaga missatges secrets en imatges utilitzant la manipulació de matrius de píxels</p>
+        </header>
 
-    <meta property="og:title" content="Pau Jiménez Sánchez - Academic Portfolio" />
-    <meta property="og:description" content="Interactive mathematical demonstrations and computational projects" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(0)">📚 Teoria i Guia Manual</button>
+            <button class="tab-btn" onclick="switchTab(1)">🛠️ Eina d'Encriptació i Desencriptació</button>
+        </div>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Pau Jiménez Sánchez - Academic Portfolio" />
-    <meta name="twitter:description" content="Interactive mathematical demonstrations and computational projects" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+        <div class="tab-content active" id="tab-theory">
+            <h2>Comprendre l'Esteganografia Basada en Matrius</h2>
+            
+            <h3>Què és l'Esteganografia?</h3>
+            <p>L'esteganografia és la pràctica d'ocultar informació dins d'altres dades no secretes. A diferència del xifratge, que fa que les dades siguin illegibles, l'esteganografia amaga la mateixa existència del missatge. Les imatges digitals són portadors perfectes perquè contenen milers de píxels i les modificacions lleus són imperceptibles per a l'ull humà.</p>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+            <h3>Com Funcionen les Matrius de Píxels</h3>
+            <p>Les imatges digitals s'emmagatzemen com a matrius (quadrícules) de píxels. Cada píxel conté informació de color codificada com a números. En el model de color RGB, cada píxel té tres valors que van de 0 a 255:</p>
+            <ul style="margin-left: 30px; line-height: 2;">
+                <li><strong>R (Vermell)</strong>: 0-255</li>
+                <li><strong>G (Verde)</strong>: 0-255</li>
+                <li><strong>B (Blau)</strong>: 0-255</li>
+            </ul>
+            <p>Per exemple, el vermell pur és (255, 0, 0), el verd pur és (0, 255, 0) i el blau pur és (0, 0, 255).</p>
+
+            <div class="example-box">
+                <p><strong>Representació de matriu d'una imatge 3×3:</strong></p>
+                <div class="code">Píxel[0,0]: (245, 130, 88)   Píxel[0,1]: (120, 200, 150)   Píxel[0,2]: (90, 110, 200)
+Píxel[1,0]: (200, 50, 100)   Píxel[1,1]: (180, 180, 180)   Píxel[1,2]: (75, 95, 210)
+Píxel[2,0]: (255, 0, 0)      Píxel[2,1]: (0, 255, 0)        Píxel[2,2]: (0, 0, 255)</div>
+                <p>Cada píxel és accessible per la seva posició [fila, columna] a la matriu.</p>
+            </div>
+
+            <h3>Codificació del Bit Menys Significatiu (LSB)</h3>
+            <p>La tècnica LSB aprofita el fet que canviar l'últim bit d'un valor de color produeix una diferència visual insignificant. Per exemple, canviar el blau de 154 a 155 és imperceptible.</p>
+            
+            <div class="example-box">
+                <p><strong>Representació binària:</strong></p>
+                <div class="code">154 en binari: 10011010
+155 en binari: 10011011  ← Només l'últim bit ha canviat!
+                
+Diferència visual: IMPERCEPTIBLE per a l'ull humà</div>
+                <p>Aquest petit canvi és invisible per a l'ull humà però ens permet emmagatzemar dades.</p>
+            </div>
+
+            <h3>Aritmètica Modular (mod 2) per LSB</h3>
+            <p>Utilitzem l'aritmètica modular per manipular bits de manera eficient:</p>
+            <ul style="margin-left: 30px; line-height: 2;">
+                <li><strong>Codificació:</strong> <code>píxel = (píxel & 0xFE) | bit</code>
+                    <ul style="margin-left: 20px;">
+                        <li><code>píxel & 0xFE</code>: Operació AND bit a bit amb 11111110 que esborra l'últim bit (el posa a 0)</li>
+                        <li><code>| bit</code>: Operació OR bit a bit que estableix l'últim bit al nostre bit de missatge (0 o 1)</li>
+                    </ul>
+                </li>
+                <li><strong>Descodificació:</strong> <code>bit = píxel & 1</code>
+                    <ul style="margin-left: 20px;">
+                        <li>Operació AND amb 00000001 que extreu només l'últim bit del valor del píxel</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="example-box">
+                <p><strong>Exemple pràctic d'operacions bit a bit:</strong></p>
+                <div class="code">Valor original del píxel: 154 (10011010)
+Bit a emmagatzemar: 1
+
+Pas 1 - Esborrar LSB:
+  10011010  (154)
+& 11111110  (0xFE)
+-----------
+  10011010  (154 - LSB ja era 0)
+
+Pas 2 - Establir el nou bit:
+  10011010
+| 00000001  (bit = 1)
+-----------
+  10011011  (155)
+
+Resultat: 154 → 155 (bit 1 emmagatzemat)</div>
+            </div>
+
+            <h3>Encriptació amb Aritmètica Modular Afí</h3>
+            <p>Per afegir una capa addicional de seguretat, utilitzem el <strong>xifratge afí</strong>, un tipus d'encriptació basada en aritmètica modular. Abans d'emmagatzemar cada caràcter a la imatge, el transformem utilitzant la fórmula:</p>
+            
+            <div class="example-box">
+                <p><strong>Fórmula d'Encriptació:</strong></p>
+                <div class="code">E(x) = (a·x + b) mod 256
+
+On:
+  x = Valor ASCII del caràcter (0-255)
+  a = Multiplicador (ha de ser coprimer amb 256)
+  b = Desplaçament (0-255)
+  E(x) = Valor encriptat resultant</div>
+            </div>
+
+            <h3>Per Què Funciona el Xifratge Afí?</h3>
+            <p>El xifratge afí combina dues operacions matemàtiques:</p>
+            <ul style="margin-left: 30px; line-height: 2;">
+                <li><strong>Multiplicació per 'a'</strong>: Dispersa els valors de forma no lineal</li>
+                <li><strong>Suma de 'b'</strong>: Desplaça tots els valors una quantitat fixa</li>
+                <li><strong>Mòdul 256</strong>: Assegura que el resultat estigui dins del rang 0-255 (un byte)</li>
+            </ul>
+
+            <h3>Condicions Matemàtiques per al Paràmetre 'a'</h3>
+            <p>El valor de 'a' ha de complir condicions específiques per permetre la desencriptació:</p>
+            
+            <div class="example-box">
+                <p><strong>Requisit: MCD(a, 256) = 1</strong></p>
+                <p>El Màxim Comú Divisor entre 'a' i 256 ha de ser 1. Això significa que 'a' i 256 són <strong>coprimers</strong> (no comparteixen factors comuns excepte 1).</p>
+                
+                <div class="code">Exemples de valors VÀLIDS per 'a':
+1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25...
+(tots els números senars que no són múltiples de altres factors)
+
+Exemples de valors NO VÀLIDS per 'a':
+2, 4, 6, 8, 10, 12, 14, 16... (parells - comparteixen el factor 2 amb 256)
+
+Per què? 256 = 2⁸
+Qualsevol número parell comparteix el factor 2 amb 256
+Això fa impossible calcular l'invers modular necessari per desencriptar</div>
+            </div>
+
+            <h3>Càlcul de l'Invers Modular</h3>
+            <p>Per desencriptar, necessitem trobar l'<strong>invers modular</strong> de 'a' respecte a 256, denotat com a⁻¹. Aquest és un número tal que:</p>
+            
+            <div class="example-box">
+                <div class="code">a · a⁻¹ ≡ 1 (mod 256)
+
+Exemple amb a = 5:
+Necessitem trobar a⁻¹ tal que (5 · a⁻¹) mod 256 = 1
+
+Provant valors:
+5 · 51 = 255 mod 256 = 255 ✗
+5 · 77 = 385 mod 256 = 129 ✗
+5 · 205 = 1025 mod 256 = 1 ✓
+
+Per tant, l'invers modular de 5 és 205</div>
+                
+                <p><strong>Mètode de càlcul:</strong> Utilitzem l'<strong>Algoritme d'Euclides Estès</strong> per trobar l'invers modular de forma eficient. Aquest algoritme troba els coeficients de l'identitat de Bézout.</p>
+            </div>
+
+            <h3>Fórmula de Desencriptació</h3>
+            <p>Un cop tenim l'invers modular, podem revertir el procés d'encriptació:</p>
+            
+            <div class="example-box">
+                <p><strong>Fórmula de Desencriptació:</strong></p>
+                <div class="code">D(y) = a⁻¹ · (y - b) mod 256
+
+On:
+  y = Valor encriptat
+  a⁻¹ = Invers modular de 'a'
+  b = Mateix desplaçament utilitzat en l'encriptació
+  D(y) = Valor original desencriptat</div>
+            </div>
+
+            <h3>Exemple Complet d'Encriptació i Desencriptació</h3>
+            <div class="example-box">
+                <p><strong>Paràmetres:</strong> a = 5, b = 8</p>
+                <p><strong>Invers modular:</strong> a⁻¹ = 205</p>
+                <p><strong>Caràcter a encriptar:</strong> 'H'</p>
+                
+                <div class="code">Pas 1: Obtenir valor ASCII
+'H' → ASCII = 72
+
+Pas 2: Aplicar fórmula d'encriptació
+E(72) = (5 · 72 + 8) mod 256
+E(72) = (360 + 8) mod 256
+E(72) = 368 mod 256
+E(72) = 112
+
+Pas 3: Emmagatzemar 112 a la imatge (en binari: 01110000)
+
+Pas 4: Per desencriptar, recuperem el valor 112
+D(112) = 205 · (112 - 8) mod 256
+D(112) = 205 · 104 mod 256
+D(112) = 21320 mod 256
+D(112) = 72
+
+Pas 5: Convertir a caràcter
+ASCII 72 → 'H' ✓ Recuperat correctament!</div>
+            </div>
+
+            <h3>Per Què Aquest Mètode És Segur?</h3>
+            <ul style="margin-left: 30px; line-height: 2;">
+                <li><strong>Ocultació doble:</strong> El missatge està amagat (esteganografia) I encriptat (xifratge afí)</li>
+                <li><strong>Clau secreta:</strong> Sense conèixer els valors de 'a' i 'b', és impossible desencriptar</li>
+                <li><strong>Espai de claus:</strong> Amb múltiples valors vàlids per 'a' (128 opcions) i 256 opcions per 'b', hi ha 32.768 combinacions possibles</li>
+                <li><strong>Resistència a anàlisi visual:</strong> Els canvis al LSB són imperceptibles</li>
+            </ul>
+
+            <h3>Exemple Manual Pas a Pas: Codificar 'A' amb Encriptació</h3>
+            <div class="example-box">
+                <p><strong>Tasca:</strong> Codificar la lletra 'A' en una imatge amb a=5, b=8</p>
+                
+                <p><strong>Pas 1:</strong> Convertir 'A' a ASCII i encriptar</p>
+                <div class="code">Valor ASCII de 'A' = 65
+Encriptació: (5 · 65 + 8) mod 256 = 333 mod 256 = 77
+77 en binari = 01001101</div>
+
+                <p><strong>Pas 2:</strong> Agafar els valors del canal blau dels primers 8 píxels</p>
+                <div class="code">Valors blaus originals (en binari):
+Píxel 1: 154 (10011010)
+Píxel 2: 200 (11001000)
+Píxel 3: 87  (01010111)
+Píxel 4: 123 (01111011)
+Píxel 5: 201 (11001001)
+Píxel 6: 45  (00101101)
+Píxel 7: 99  (01100011)
+Píxel 8: 176 (10110000)</div>
+
+                <p><strong>Pas 3:</strong> Reemplaçar el LSB de cada píxel amb els bits del valor encriptat (77 = 01001101)</p>
+                <div class="code">Bits a emmagatzemar: 0 1 0 0 1 1 0 1
+
+Píxel 1: 10011010 → 10011010 (bit 0) = 154 (sense canvi)
+Píxel 2: 11001000 → 11001001 (bit 1) = 201 (+1)
+Píxel 3: 01010111 → 01010110 (bit 0) = 86 (-1)
+Píxel 4: 01111011 → 01111010 (bit 0) = 122 (-1)
+Píxel 5: 11001001 → 11001001 (bit 1) = 201 (sense canvi)
+Píxel 6: 00101101 → 00101101 (bit 1) = 45 (sense canvi)
+Píxel 7: 01100011 → 01100010 (bit 0) = 98 (-1)
+Píxel 8: 10110000 → 10110001 (bit 1) = 177 (+1)</div>
+
+                <p><strong>Pas 4:</strong> La imatge modificada ara conté 'A' encriptada com a 77!</p>
+                
+                <p><strong>Pas 5:</strong> Per desencriptar:</p>
+                <div class="code">Llegir LSBs: 01001101 = 77
+Aplicar fórmula inversa: D(77) = 205 · (77 - 8) mod 256
+D(77) = 205 · 69 mod 256 = 14145 mod 256 = 65
+ASCII 65 = 'A' ✓</div>
+            </div>
+
+            <h3>Estructura d'Emmagatzematge a la Imatge</h3>
+            <div class="example-box">
+                <p><strong>Format de dades a la imatge:</strong></p>
+                <div class="code">Bits 0-15:    Longitud del missatge (16 bits, màx 65535 caràcters)
+Bits 16-23:   Primer caràcter encriptat (8 bits)
+Bits 24-31:   Segon caràcter encriptat (8 bits)
+...           Caràcters restants
+                
+Exemple per "Hola" (4 caràcters, a=5, b=8):
+Bits 0-15:    0000000000000100 (longitud = 4)
+Bits 16-23:   01110000 ('H'→72→112)
+Bits 24-31:   11111101 ('o'→111→253)
+Bits 32-39:   00011100 ('l'→108→28)
+Bits 40-47:   10101101 ('a'→97→173)</div>
+            </div>
+
+            <h3>Per Què el Canal Blau?</h3>
+            <p>Codifiquem només en el canal blau per raons fisiològiques i tècniques:</p>
+            <ul style="margin-left: 30px; line-height: 2;">
+                <li><strong>Sensibilitat ocular:</strong> L'ull humà és menys sensible als canvis en el blau (conté menys cons sensibles al blau)</li>
+                <li><strong>Percepció de luminositat:</strong> El verd contribueix més a la percepció de luminositat (~59%), el vermell ~30%, i el blau només ~11%</li>
+                <li><strong>Minimització de distorsió:</strong> Modificar el blau produeix els canvis visuals menys perceptibles</li>
+            </ul>
+
+            <h3>Limitacions i Consideracions de Seguretat</h3>
+            <ul style="margin-left: 30px; line-height: 2;">
+                <li><strong>No és criptogràficament segur:</strong> El xifratge afí és vulnerable a atacs de freqüència i força bruta</li>
+                <li><strong>Detecció estadística:</strong> Eines d'estegoanàlisi poden detectar patrons als LSB modificats</li>
+                <li><strong>Format PNG:</strong> Necessari usar PNG (sense pèrdua) ja que JPEG destruiria les dades als LSB</li>
+                <li><strong>Capacitat limitada:</strong> Només podem emmagatzemar 1 bit per píxel (canal blau), limitant la capacitat</li>
+                <li><strong>Recomanació:</strong> Per dades realment sensibles, combinar amb AES o altres algoritmes moderns abans d'incrustar</li>
+            </ul>
+
+            <h3>Càlcul de Capacitat d'Emmagatzematge</h3>
+            <div class="example-box">
+                <div class="code">Capacitat = (Amplada × Alçada × 1 bit) / 8 bits per byte
+
+Exemple per imatge 800×600:
+Píxels totals = 800 × 600 = 480.000 píxels
+Bits disponibles = 480.000 bits (1 per píxel al canal blau)
+Bytes disponibles = 480.000 / 8 = 60.000 bytes
+                
+Descomptant 2 bytes per la longitud:
+Capacitat real ≈ 59.998 caràcters (molt més que el límit de 256!)</div>
+            </div>
+
+            <h3>Avantatges de la Implementació</h3>
+            <ul style="margin-left: 30px; line-height: 2;">
+                <li>✓ <strong>Execució client-side:</strong> Tot el processament es fa al navegador, sense enviar dades a servidors</li>
+                <li>✓ <strong>Paràmetres personalitzables:</strong> L'usuari pot triar els seus propis valors de 'a' i 'b'</li>
+                <li>✓ <strong>Validació automàtica:</strong> El sistema verifica que els paràmetres siguin matemàticament vàlids</li>
+                <li>✓ <strong>Feedback visual:</strong> Mostra la matriu de píxels abans i després per propòsits educatius</li>
+                <li>✓ <strong>Compatible amb GitHub Pages:</strong> No requereix backend, funciona completament estàtic</li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="tab-tool">
+            <h2>Eina d'Encriptació i Desencriptació</h2>
+
+            <div class="tool-section">
+                <h3>🔐 Configuració d'Encriptació Modular</h3>
+                <p>Configura els paràmetres per a la fórmula <strong>(a·x + b) mod 256</strong></p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                    <div>
+                        <label for="paramA" style="display: block; font-weight: 600; margin-bottom: 5px;">Multiplicador (a):</label>
+                        <input type="number" id="paramA" value="5" min="1" max="255" style="width: 100%;">
+                        <small style="color: #666;">Ha de ser senar i coprimer amb 256</small>
+                    </div>
+                    <div>
+                        <label for="paramB" style="display: block; font-weight: 600; margin-bottom: 5px;">Desplaçament (b):</label>
+                        <input type="number" id="paramB" value="8" min="0" max="255" style="width: 100%;">
+                        <small style="color: #666;">Qualsevol valor entre 0-255</small>
+                    </div>
+                </div>
+                
+                <div id="paramWarning"></div>
+                
+                <button onclick="testEncryption()" style="background: #28a745;">🧪 Provar Encriptació</button>
+                <div id="testResult"></div>
+            </div>
+
+            <div class="tool-section">
+                <h3>🔒 Encriptar - Amagar un Missatge</h3>
+                <p>Puja una imatge PNG i introdueix un missatge secret per amagar-lo.</p>
+                
+                <div class="upload-area" id="encryptUpload" onclick="document.getElementById('encryptFile').click()">
+                    <p style="font-size: 3em; margin-bottom: 10px;">📁</p>
+                    <p style="font-size: 1.2em; font-weight: 600;">Fes clic per pujar o arrossega i deixa anar</p>
+                    <p style="color: #666;">Només imatges PNG (màx 5MB)</p>
+                </div>
+                <input type="file" id="encryptFile" accept="image/png">
+                
+                <div id="encryptImagePreview"></div>
+                
+                <label for="secretMessage" style="display: block; font-weight: 600; margin-top: 20px;">Missatge Secret:</label>
+                <textarea id="secretMessage" placeholder="Introdueix el teu missatge secret aquí (màx 256 caràcters)" maxlength="256"></textarea>
+                <div class="char-limit"><span id="charCount">0</span> / 256 caràcters</div>
+                
+                <button id="encryptBtn" onclick="encryptMessage()" disabled>🔒 Encriptar i Descarregar</button>
+                
+                <div id="encryptMessage"></div>
+                <div id="encryptPreview"></div>
+            </div>
+
+            <div class="tool-section">
+                <h3>🔓 Desencriptar - Extreure Missatge Amagat</h3>
+                <p>Puja una imatge amb un missatge amagat per revelar el seu secret.</p>
+                
+                <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong>⚠️ Important:</strong> Utilitza els mateixos valors de <strong>a</strong> i <strong>b</strong> que vas utilitzar per encriptar!
+                </div>
+                
+                <div class="upload-area" id="decryptUpload" onclick="document.getElementById('decryptFile').click()">
+                    <p style="font-size: 3em; margin-bottom: 10px;">📁</p>
+                    <p style="font-size: 1.2em; font-weight: 600;">Fes clic per pujar o arrossega i deixa anar</p>
+                    <p style="color: #666;">Només imatges PNG (màx 5MB)</p>
+                </div>
+                <input type="file" id="decryptFile" accept="image/png">
+                
+                <div id="decryptImagePreview"></div>
+                
+                <button id="decryptBtn" onclick="decryptMessage()" disabled>🔓 Desencriptar Missatge</button>
+                
+                <div id="decryptMessage"></div>
+                <div id="extractedMessage"></div>
+                <div id="decryptPreview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
 </html>
