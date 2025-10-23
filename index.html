@@ -7,6 +7,23 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <button class="download-pptx-btn" onclick="downloadPPTX()">
+        📥 Descarregar Presentació
+    </button>
+
+    <script>
+    function downloadPPTX() {
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.href = 'esteganografiapaujimenez.pptx';
+        link.download = 'esteganografiapaujimenez.pptx';
+        
+        // Append to body, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    </script>
     <div class="container">
         <header>
             <h1>🔐 Esteganografia Basada en Matrius</h1>
