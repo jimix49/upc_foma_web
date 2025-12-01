@@ -24,6 +24,24 @@
         document.body.removeChild(link);
     }
     </script>
+    <button class="download-pptx-btn" onclick="downloadDOCX()">
+    📥 Descarregar Document
+    </button>
+
+    <script>
+    function downloadDOCX() {
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.href = 'Esteganografia_Basada_en_Matrius.docx';
+        link.download = 'Esteganografia_Basada_en_Matrius.docx';
+    
+        // Append to body, trigger click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    </script>
+
     <div class="container">
         <header>
             <h1>🔐 Esteganografia Basada en Matrius</h1>
